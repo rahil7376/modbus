@@ -242,7 +242,7 @@ func expectedResponseLenth(responseCode uint8, responseLength uint8) (byteCount 
 		fcMaskWriteRegister | 0x80:
 		byteCount = 0
 	case uint8(0x8):
-		byteCount = 84
+		byteCount = 82
 	default:
 		err = ErrProtocolError
 	}
