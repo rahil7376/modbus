@@ -431,12 +431,12 @@ func (mc *ModbusClient) ReadRegister(addr uint16, regType RegType) (value uint16
 	return
 }
 
-// Reads multiple 16-bit registers (function code 03 or 04).
-func (mc *ModbusClient) ReadLogFromDevice(addr uint16, Index int) (values []uint16, err error) {
+// Reads logs from device (function code 08).
+func (mc *ModbusClient) ReadLogFromDevice(Index int) (values []uint16, err error) {
 	var mbPayload []byte
 
 	// read quantity uint16 registers, as bytes
-	mbPayload, err = mc.readLog(addr, Index)
+	mbPayload, err = mc.readLog(Index)
 	if err != nil {
 		return
 	}
@@ -1117,7 +1117,7 @@ func (mc *ModbusClient) readRegisters(addr uint16, quantity uint16, regType RegT
 
 // ReadLog
 
-func (mc *ModbusClient) readLog(addr uint16, LogIndex int) (bytes []byte, err error) {
+func (mc *ModbusClient) readLog(LogIndex int) (bytes []byte, err error) {
 	var req *pdu
 	// var res *pdu
 
@@ -1265,6 +1265,7 @@ func (mc *ModbusClient) writeRegisters(addr uint16, values []byte) (err error) {
 func (mc *ModbusClient) executeRequest(req *pdu) (res *pdu, err error) {
 	// send the request over the wire, wait for and decode the response
 	res, err = mc.transport.ExecuteRequest(req)
+	fmt.Println("Erro from transport execute: ", err.Error())
 	if err != nil {
 		// map i/o timeouts to ErrRequestTimedOut
 		if os.IsTimeout(err) {
