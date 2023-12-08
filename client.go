@@ -1119,7 +1119,7 @@ func (mc *ModbusClient) readRegisters(addr uint16, quantity uint16, regType RegT
 
 func (mc *ModbusClient) readLog(addr uint16, LogIndex int) (bytes []byte, err error) {
 	var req *pdu
-	var res *pdu
+	// var res *pdu
 
 	mc.lock.Lock()
 	defer mc.lock.Unlock()
@@ -1139,45 +1139,45 @@ func (mc *ModbusClient) readLog(addr uint16, LogIndex int) (bytes []byte, err er
 	copy(req.payload[2:], uint16ToBytes(BIG_ENDIAN, uint16(LogIndex)))
 
 	// run the request across the transport and wait for a response
-	res, err = mc.executeRequest(req)
+	res, err := mc.executeRequest(req)
 	if err != nil {
 		return
 	}
 
 	// validate the response code
-	switch {
-	case res.functionCode == req.functionCode:
-		// make sure the payload length is what we expect
-		// (1 byte of length + 2 bytes per register)
-		if len(res.payload) != 84 {
-			err = ErrProtocolError
-			return
-		}
+	// switch {
+	// case res.functionCode == req.functionCode:
+	// 	// make sure the payload length is what we expect
+	// 	// (1 byte of length + 2 bytes per register)
+	// 	if len(res.payload) != 84 {
+	// 		err = ErrProtocolError
+	// 		return
+	// 	}
 
-		// validate the byte count field
-		// (2 bytes per register * number of registers)
-		if uint(res.payload[0]) != 84 {
-			err = ErrProtocolError
-			return
-		}
+	// 	// validate the byte count field
+	// 	// (2 bytes per register * number of registers)
+	// 	if uint(res.payload[0]) != 84 {
+	// 		err = ErrProtocolError
+	// 		return
+	// 	}
 
-		// remove the byte count field from the returned slice
-		bytes = res.payload[1:]
+	// 	// remove the byte count field from the returned slice
+	// 	bytes = res.payload[1:]
 
-	case res.functionCode == (req.functionCode | 0x80):
-		if len(res.payload) != 1 {
-			err = ErrProtocolError
-			return
-		}
+	// case res.functionCode == (req.functionCode | 0x80):
+	// 	if len(res.payload) != 1 {
+	// 		err = ErrProtocolError
+	// 		return
+	// 	}
 
-		err = mapExceptionCodeToError(res.payload[0])
+	// 	err = mapExceptionCodeToError(res.payload[0])
 
-	default:
-		err = ErrProtocolError
-		mc.logger.Warningf("unexpected response code (%v)", res.functionCode)
-	}
+	// default:
+	// 	err = ErrProtocolError
+	// 	mc.logger.Warningf("unexpected response code (%v)", res.functionCode)
+	// }
 
-	return
+	return res.payload, err
 }
 
 // Writes multiple registers starting from base address addr.
