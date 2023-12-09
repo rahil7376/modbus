@@ -65,7 +65,6 @@ func (rt *rtuTransport) ExecuteRequest(req *pdu) (res *pdu, err error) {
 	err = rt.link.SetDeadline(time.Now().Add(rt.timeout))
 
 	if err != nil {
-		fmt.Println("Deadline func error : ", err.Error())
 		return
 	}
 
@@ -80,12 +79,9 @@ func (rt *rtuTransport) ExecuteRequest(req *pdu) (res *pdu, err error) {
 
 	// build an RTU ADU out of the request object and
 	// send the final ADU+CRC on the wire
-	fmt.Println("Custome Command passed is : ", rt.assembleRTUFrame(req))
 
 	n, err = rt.link.Write(rt.assembleRTUFrame(req))
-	fmt.Println("Written No : ", n)
 	if err != nil {
-		fmt.Println("error output of link wrote : ", err.Error())
 		return
 	}
 
