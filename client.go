@@ -1265,8 +1265,9 @@ func (mc *ModbusClient) writeRegisters(addr uint16, values []byte) (err error) {
 func (mc *ModbusClient) executeRequest(req *pdu) (res *pdu, err error) {
 	// send the request over the wire, wait for and decode the response
 	res, err = mc.transport.ExecuteRequest(req)
-	fmt.Println("Erro from transport execute: ", err.Error())
+
 	if err != nil {
+		fmt.Println("Erro from transport execute: ", err.Error())
 		// map i/o timeouts to ErrRequestTimedOut
 		if os.IsTimeout(err) {
 			err = ErrRequestTimedOut
